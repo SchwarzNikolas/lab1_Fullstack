@@ -31,6 +31,39 @@ app.get("/api/dishes", async (req, res, next) => {
         }
 })
 
+app.get("/api/dishes/:name", async (req, res, next) => {
+        try {
+                const dishes = await Dishes.find({name: req.params.name});
+                if (dishes.length === 0){
+                        const err = new Error("Dish not found.");
+                        err.status = 404;
+                        next(err);
+                        return;
+                }
+                res.json(dishes);
+        } catch (err) {
+                next(err);
+        }
+})
+
+app.post("/api/dishes", async (req, res, next) => {
+        try {
+                const dish = new Dishes(req.body);
+                const sameTitle = await Dishes.find({name: req.body?.name});
+                if (sameTitle.length > 0){
+                        const err = new Error("Dish already exists.");
+                        err.status = 409;
+                        next(err);
+                        return;
+                }
+                await dish.save();
+                res.status(201).send();
+        } catch (err) {
+                next(err);
+        }
+
+})
+
 app.use((req, res, next) => {
         const error = new Error("not found");
         error.status = 404;
