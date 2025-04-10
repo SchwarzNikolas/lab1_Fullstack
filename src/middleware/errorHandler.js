@@ -14,7 +14,7 @@ errorHandler.duplicate = (req, res, next) => {
 
 errorHandler.defaultError = (err, req, res, next) => {
         const status = err.status || 500;
-        res.json({
+        res.status(status).json({
                 status: status,
                 message: err.message
         })

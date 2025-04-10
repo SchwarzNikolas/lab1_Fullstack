@@ -1,6 +1,8 @@
 const API_URL = "/api/dishes";
-
-//TODO: cleanup code, add comments
+let currentDeleteId = null;
+const deleteModal = document.getElementById("deleteModal");
+const confirmDeleteBtn = document.getElementById("confirmDelete");
+const cancelDeleteBtn = document.getElementById("cancelDelete");
 
 function ready(fn){
         if (document.readyState !== 'loading'){
@@ -30,7 +32,7 @@ async function loadDishes() {
                         row.querySelector(".difficulty").innerText = dish.difficulty;
 
                         row.querySelector(".update").addEventListener("click", () => updateDish(dish._id, row));
-                        row.querySelector(".delete").addEventListener("click", () => deleteDish(dish._id));
+                        row.querySelector(".delete").addEventListener("click", () => showDeleteModal(dish._id));
 
                         table.appendChild(clone);
                 });
@@ -39,10 +41,20 @@ async function loadDishes() {
         }
 }
 
-async function deleteDish(id) {
-        if (confirm("Are you sure you want to delete this recipe?")) {
-                await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+
+function showDeleteModal(id) {
+        currentDeleteId = id;
+        deleteModal.style.display = "block";
+}
+
+async function deleteDish() {
+        try {
+                await fetch(`${API_URL}/${currentDeleteId}`, { method: "DELETE" });
+                deleteModal.style.display = "none";
                 loadDishes();
+        } catch (err) {
+                console.error("Error deleting dish:", err);
+                deleteModal.style.display = "none";
         }
 }
 
@@ -53,26 +65,31 @@ async function addElement(){
                 const newDish = {
                         name: form.name.value,
                         ingredients: form.ingredients.value.split(",").map(s => s.trim()),
-                        preparationSteps: form.preparationSteps.value.split(".").map(s => s.trim()),
+                        preparationSteps: form.preparationSteps.value
+                        .split(/(?<=\.)\s+/)
+                        .map(s => s.trim())
+                        .filter(step => step !== ""),
                         cookingTime: form.cookingTime.value,
                         origin: form.origin.value,
                         difficulty: form.difficulty.value,
                 };
-
                 try {
                         const res = await fetch(API_URL, {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify(newDish),
                         });
-                        
-                        const responseData = await res.json();
 
-                        if (responseData.status == 409) {
-                                alert(`Error: ${responseData.message}`);
-                                return;
+                        if (!res.ok){
+                                const responseData = await res.json();
+                                if (responseData.status == 409) {
+                                        const error = document.getElementById("nameError");
+                                        error.innerText = responseData.message;
+                                        error.style.display = "flex";
+                                        return;
+                                }
                         }
-
+                        document.getElementById("nameError").style = "none";
                         form.reset();
                         loadDishes();
                 } catch (err) {
@@ -110,5 +127,19 @@ async function updateDish(id, row) {
         }
 }
 
+function setupModal(){
+        confirmDeleteBtn.addEventListener("click", deleteDish);
+        cancelDeleteBtn.addEventListener("click", () => {
+                deleteModal.style.display = "none";
+        });
+
+        document.addEventListener("click", (e) => {
+                if (e.target === deleteModal) {
+                        deleteModal.style.display = "none";
+                }
+        });
+}
+
 ready(addElement);
 ready(loadDishes);
+ready(setupModal)
