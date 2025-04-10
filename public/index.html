@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <title></title>
+                <link href="css/style.css" rel="stylesheet">
+        </head>
+        <body>
+                <h1>Recipe Book</h1>
+                <form id="addForm">
+                        <h2>Add New Recipe</h2>
+                        <label>Name: <input type="text" name="name" required /></label><br>
+                        <label>Ingredients (comma separated): <input type="text" name="ingredients" required /></label><br>
+                        <label>Preparation Steps (dot separated): <input type="text" name="preparationSteps" required /></label><br>
+                        <label>Cooking Time (minutes): <input type="number" name="cookingTime" required /></label><br>
+                        <label>Origin: <input type="text" name="origin" required /></label><br>
+                        <label>Difficulty: <input type="text" name="difficulty" required /></label><br>
+                        <button type="submit">Add Recipe</button>
+                </form>
+                <h2>Recipes</h2>
+                <table>
+                        <thead>
+                                <tr>
+                                        <th>Name</th>
+                                        <th>Ingredients</th>
+                                        <th>Steps</th>
+                                        <th>Time [min]</th>
+                                        <th>Origin</th>
+                                        <th>Difficulty</th>
+                                        <th>Actions</th>
+                                </tr>
+                        </thead>
+                        <tbody id="dishTable">
+                        </tbody>
+                </table>
+                <template id="dishRowTemplate">
+                        <tr>
+                                <td><span class="name", contenteditable="true"></span></td>
+                                <td><span class="ingredients", contenteditable="true"></span></td>
+                                <td><span class="steps", contenteditable="true"></span></td>
+                                <td><span class="time", contenteditable="true"></span></td>
+                                <td><span class="origin", contenteditable="true"></span></td>
+                                <td><span class="difficulty", contenteditable="true"></span></td>
+                                <td><button class="update">Update</button><button class="delete">Delete</button></td>
+                        </tr>
+                </template>
+                <script src="js/dishScript.js"></script>
+        </body>
+</html>

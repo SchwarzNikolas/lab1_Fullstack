@@ -1,5 +1,6 @@
 import { errorHandler } from "../middleware/errorHandler.js";
 import Dishes from "../model/Dishes.js";
+import mongoose from "mongoose";
 
 class DishController {
 
