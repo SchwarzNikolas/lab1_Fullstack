@@ -125,6 +125,30 @@ class DishController {
                         next(err); // Pass any errors to the error handler
                 }
         }
+        
+        /**
+         * Retrieve a dish by its ID from the database.
+         *
+         * @param {object} req - The Express request object, containing the dish ID in params.
+         * @param {object} res - The Express response object.
+         * @param {Function} next - The next middleware function.
+         */
+        async getById(req, res, next){
+                try {
+                        if (!mongoose.Types.ObjectId.isValid(req.params.id)){
+                                errorHandler.notFound(req, res, next); // Handle 404 if the ID is not valid
+                                return;
+                        }
+                        const sameTitle = await Dishes.findById(req.params.id);
+                        if (!sameTitle) {
+                                errorHandler.notFound(req, res, next); // Handle 404 if the dish doesn't exist
+                                return;
+                        }
+                        res.json(sameTitle);
+                } catch (err) {
+                        next(err);
+                }
+        }
 }
 
 // Export an instance of the DishController to be used in other parts of the application

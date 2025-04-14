@@ -18,6 +18,15 @@ router.get("/api/dishes", DishController.getAllDishes);
  */
 router.get("/api/dishes/:name", DishController.getDishByName);
 
+
+/**
+ * Route to retrive a dish by id.
+ * Calls the getById method in the DishController.
+ *
+ * @param {string} id - The id of the dish to retrieve.
+ */
+router.get("/api/dishes/id/:id" , DishController.getById);
+
 /**
  * Route to create a new dish.
  * Calls the createDish method in the DishController.
